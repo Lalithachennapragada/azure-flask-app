@@ -1,0 +1,25 @@
+name: Build and Deploy to ACR
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Login to ACR
+        run: az acr login --name chennapragadaacr
+
+      - name: Build and Push to ACR
+        run: |
+          az acr build --registry chennapragadaacr --image flask-app:v1 .
